@@ -8,24 +8,34 @@ class AuthService {
   static User? get currentUser => _auth.currentUser;
 
   //email pass login
-  static Future<bool> login(String email, String password) async {
+  static Future<UserCredential> login(String email, String password) async {
     final credential = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
-    return credential.user != null;
+
+    return credential;
   }
 
   //email pass register
-  static Future<bool> register(String email, String password) async {
+  static Future<UserCredential> register(String email, String password) async {
     final credential = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
-    return credential.user != null;
+    return credential;
   }
 
   //guest sign in
   static Future<UserCredential> signInAnonymously() =>
       _auth.signInAnonymously();
 
-  static Future<void> logout() => _auth.signOut();
+  static Future<void> logout() {
+    if (_auth.currentUser!.isAnonymous) {
+      return _auth.currentUser!.delete();
+    }
+    return _auth.signOut();
+  }
+
+  static Future<void> deleteAccount() {
+    return _auth.currentUser!.delete();
+  }
 
   static Future<UserCredential> signInWithGoogle() async {
     // Trigger the authentication flow
@@ -42,6 +52,6 @@ class AuthService {
     );
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    return await _auth.signInWithCredential(credential);
   }
 }

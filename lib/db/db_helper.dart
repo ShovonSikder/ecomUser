@@ -1,8 +1,13 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecomuser/models/cart_model.dart';
 import 'package:ecomuser/models/category_model.dart';
+import 'package:ecomuser/models/comment_model.dart';
 import 'package:ecomuser/models/order_constant_model.dart';
 import 'package:ecomuser/models/product_model.dart';
 import 'package:ecomuser/models/purchase_model.dart';
+import 'package:ecomuser/models/rating_model.dart';
 import 'package:ecomuser/models/user_model.dart';
 
 class DbHelper {
@@ -77,6 +82,10 @@ class DbHelper {
     return _db.collection(collectionUser).doc(uid).update(map);
   }
 
+  static Future<void> updateProductField(String pid, Map<String, dynamic> map) {
+    return _db.collection(collectionProduct).doc(pid).update(map);
+  }
+
   static Future<void> repurchase(
       PurchaseModel purchaseModel, ProductModel productModel) async {
     final wb = _db.batch();
@@ -108,4 +117,76 @@ class DbHelper {
         .doc(documentOrderConstants)
         .update(model.toMap());
   }
+
+  static Future<void> addRating(RatingModel ratingModel) async {
+    final ratDoc = _db
+        .collection(collectionProduct)
+        .doc(ratingModel.productId)
+        .collection(collectionRating)
+        .doc(ratingModel.userModel.userId);
+
+    return ratDoc.set(ratingModel.toMap());
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> getRattingsByProduct(
+          String pid) =>
+      _db
+          .collection(collectionProduct)
+          .doc(pid)
+          .collection(collectionRating)
+          .get();
+
+  static Future<void> addComment(CommentModel commentModel) {
+    return _db
+        .collection(collectionProduct)
+        .doc(commentModel.productId)
+        .collection(collectionComment)
+        .doc(commentModel.commentId)
+        .set(commentModel.toMap());
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> getAllCommentsByProduct(
+      String productId) {
+    return _db
+        .collection(collectionProduct)
+        .doc(productId)
+        .collection(collectionComment)
+        .where(commentFieldApproved, isEqualTo: true)
+        .get();
+  }
+
+  static Future<void> addToCart(String uid, CartModel cartModel) {
+    return _db
+        .collection(collectionUser)
+        .doc(uid)
+        .collection(collectionCart)
+        .doc(cartModel.productId)
+        .set(cartModel.toMap());
+  }
+
+  static Future<void> removeFromCart(String uid, String s) {
+    return _db
+        .collection(collectionUser)
+        .doc(uid)
+        .collection(collectionCart)
+        .doc(s)
+        .delete();
+  }
+
+  static Future<void> updateCartQuantity(String uid, CartModel cartModel) {
+    return _db
+        .collection(collectionUser)
+        .doc(uid)
+        .collection(collectionCart)
+        .doc(cartModel.productId)
+        .set(cartModel.toMap());
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllCartItems(
+          String uid) =>
+      _db
+          .collection(collectionUser)
+          .doc(uid)
+          .collection(collectionCart)
+          .snapshots();
 }

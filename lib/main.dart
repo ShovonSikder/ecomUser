@@ -1,5 +1,8 @@
+import 'package:ecomuser/auth/authservice.dart';
+import 'package:ecomuser/pages/cart_page.dart';
 import 'package:ecomuser/pages/otp_verification_page.dart';
 import 'package:ecomuser/pages/user_profile_page.dart';
+import 'package:ecomuser/providers/card_provider.dart';
 import 'package:ecomuser/providers/order_provider.dart';
 import 'package:ecomuser/providers/product_provider.dart';
 import 'package:ecomuser/providers/user_provider.dart';
@@ -21,14 +24,50 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(
+      create: (context) => CartProvider(),
+    ),
     ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => OrderProvider()),
     ChangeNotifierProvider(create: (_) => UserProvider()),
   ], child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +91,7 @@ class MyApp extends StatelessWidget {
         SettingsPage.routeName: (context) => const SettingsPage(),
         UserProfilePage.routeName: (context) => const UserProfilePage(),
         OtpVerificationPage.routeName: (context) => const OtpVerificationPage(),
+        CartPage.routeName: (context) => const CartPage(),
       },
     );
   }

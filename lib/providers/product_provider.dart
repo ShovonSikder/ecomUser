@@ -2,7 +2,11 @@ import 'dart:io';
 
 import 'package:ecomuser/db/db_helper.dart';
 import 'package:ecomuser/models/category_model.dart';
+import 'package:ecomuser/models/comment_model.dart';
 import 'package:ecomuser/models/purchase_model.dart';
+import 'package:ecomuser/models/rating_model.dart';
+import 'package:ecomuser/models/user_model.dart';
+import 'package:ecomuser/utils/helper_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +38,11 @@ class ProductProvider extends ChangeNotifier {
 
   getAllProducts() {
     DbHelper.getAllProducts().listen((snapshot) {
+      print('listening');
       productList = List.generate(snapshot.docs.length,
           (index) => ProductModel.fromMap(snapshot.docs[index].data()));
       notifyListeners();
+      print('listened');
     });
   }
 
@@ -79,4 +85,53 @@ class ProductProvider extends ChangeNotifier {
   }
 
   void getOrderConstants() {}
+
+  Future<void> addRating(
+      String productId, double userRating, UserModel userModel) async {
+    final ratingModel = RatingModel(
+      ratingId: userModel.userId,
+      userModel: userModel,
+      productId: productId,
+      rating: userRating,
+    );
+
+    await DbHelper.addRating(ratingModel);
+
+    final snapshot = await DbHelper.getRattingsByProduct(ratingModel.productId);
+    final ratingList = List.generate(snapshot.docs.length,
+        (index) => RatingModel.fromMap(snapshot.docs[index].data()));
+
+    double totalRatings = 0.0;
+
+    for (var model in ratingList) {
+      totalRatings += model.rating;
+    }
+
+    return DbHelper.updateProductField(
+        productId, {productFieldAvgRating: totalRatings / ratingList.length});
+  }
+
+  Future<void> addComment(
+      String productId, String comment, UserModel userModel) {
+    final commentModel = CommentModel(
+        approved: true,
+        commentId: DateTime.now().microsecondsSinceEpoch.toString(),
+        userModel: userModel,
+        productId: productId,
+        comment: comment,
+        date:
+            getFormattedDate(DateTime.now(), pattern: 'dd/MM/yyyy hh:mm:s a'));
+
+    return DbHelper.addComment(commentModel);
+  }
+
+  Future<List<CommentModel>> getAllCommentByProduct(String productId) async {
+    final snapshot = await DbHelper.getAllCommentsByProduct(productId);
+    return List.generate(
+      snapshot.docs.length,
+      (index) => CommentModel.fromMap(
+        snapshot.docs[index].data(),
+      ),
+    );
+  }
 }

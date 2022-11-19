@@ -1,6 +1,6 @@
 import 'date_model.dart';
 
-const String collectionPurchase = 'purchases';
+const String collectionPurchase = 'purchase';
 
 const String purchaseFieldId = 'purchaseId';
 const String purchaseFieldProductId = 'productId';

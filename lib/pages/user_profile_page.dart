@@ -1,16 +1,10 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ecomuser/models/address_model.dart';
 import 'package:ecomuser/models/user_model.dart';
 import 'package:ecomuser/pages/otp_verification_page.dart';
 import 'package:ecomuser/providers/user_provider.dart';
-import 'package:ecomuser/utils/helper_functions.dart';
 import 'package:ecomuser/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -139,18 +133,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                   subtitle: const Text('City'),
                   trailing: IconButton(
-                      onPressed: () {
-                        showSingleTextInputDialog(
-                          context: context,
-                          title: 'Enter City',
-                          onSubmit: (value) {
-                            userProvider.updateUserProfileField(
-                                '$userFieldAddressModel.$addressFieldCity',
-                                value);
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.edit)),
+                      onPressed: () {}, icon: const Icon(Icons.edit)),
                 ),
                 ListTile(
                   leading: const Icon(Icons.folder_zip),
@@ -184,26 +167,39 @@ class _UserProfilePageState extends State<UserProfilePage> {
       height: 150,
       color: Theme.of(context).primaryColor,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Card(
-            elevation: 5,
-            child: userProvider.userModel!.imageUrl == null
-                ? const Icon(
-                    Icons.person,
-                    size: 90,
-                    color: Colors.brown,
-                  )
-                : CachedNetworkImage(
-                    imageUrl: userProvider.userModel!.imageUrl!,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    errorWidget: (context, url, error) => const Icon(
-                      Icons.error,
-                      color: Colors.red,
-                    ),
-                  ),
-          ),
+              shape: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide.none,
+              ),
+              elevation: 5,
+              child: SizedBox(
+                height: 100,
+                width: 100,
+                child: userProvider.userModel!.imageUrl == null
+                    ? const Icon(
+                        Icons.person,
+                        size: 90,
+                        color: Colors.brown,
+                      )
+                    : ClipOval(
+                        child: CachedNetworkImage(
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.cover,
+                          imageUrl: userProvider.userModel!.imageUrl!,
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.error,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+              )),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
