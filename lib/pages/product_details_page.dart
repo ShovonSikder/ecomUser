@@ -4,7 +4,7 @@ import 'package:ecomuser/customwidgets/image_holder_view.dart';
 import 'package:ecomuser/models/comment_model.dart';
 import 'package:ecomuser/models/product_model.dart';
 import 'package:ecomuser/pages/login_page.dart';
-import 'package:ecomuser/providers/card_provider.dart';
+import 'package:ecomuser/providers/cart_provider.dart';
 import 'package:ecomuser/providers/product_provider.dart';
 import 'package:ecomuser/providers/user_provider.dart';
 import 'package:ecomuser/utils/constants.dart';
@@ -98,7 +98,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (AuthService.currentUser!.isAnonymous) {
+                      redirectingDialog(
+                        context: context,
+                        source: ProductDetailsPage.routeName,
+                        destination: LoginPage.routeName,
+                        title: 'Login Required to Rate',
+                        msg: 'Goto Login page to sign up or sign in',
+                      );
+                      return;
+                    }
+                  },
                   icon: const Icon(Icons.favorite),
                   label: const Text(
                     'ADD TO FAVORITE',
@@ -111,16 +122,33 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   final isInCart =
                       provider.isProductInCart(productModel.productId!);
                   return OutlinedButton.icon(
-                    onPressed: () {
-                      isInCart
-                          ? provider.removeFromCart(productModel.productId!)
-                          : provider.addToCart(productModel);
-                    },
+                    onPressed: productModel.stock == 0
+                        ? null
+                        : () {
+                            if (AuthService.currentUser!.isAnonymous) {
+                              redirectingDialog(
+                                context: context,
+                                source: ProductDetailsPage.routeName,
+                                destination: LoginPage.routeName,
+                                title: 'Login Required to Rate',
+                                msg: 'Goto Login page to sign up or sign in',
+                              );
+                              return;
+                            }
+                            isInCart
+                                ? provider
+                                    .removeFromCart(productModel.productId!)
+                                : provider.addToCart(productModel);
+                          },
                     icon: Icon(isInCart
                         ? Icons.remove_shopping_cart
                         : Icons.shopping_cart),
                     label: Text(
-                      isInCart ? 'REMOVE FROM CART' : 'ADD TO CART',
+                      productModel.stock == 0
+                          ? 'Out of Stock'
+                          : isInCart
+                              ? 'REMOVE FROM CART'
+                              : 'ADD TO CART',
                     ),
                   );
                 }),

@@ -18,3 +18,6 @@ String calculatePriceAfterDiscount(num price, num discount) {
   final discountAmount = (price * discount) / 100;
   return (price - discountAmount).toStringAsFixed(0);
 }
+
+String get generateOrderId =>
+    'SS_${getFormattedDate(DateTime.now(), pattern: 'yyyMMdd_HH:mm:ss')}';

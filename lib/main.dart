@@ -1,8 +1,9 @@
 import 'package:ecomuser/auth/authservice.dart';
 import 'package:ecomuser/pages/cart_page.dart';
+import 'package:ecomuser/pages/checkout_page.dart';
 import 'package:ecomuser/pages/otp_verification_page.dart';
 import 'package:ecomuser/pages/user_profile_page.dart';
-import 'package:ecomuser/providers/card_provider.dart';
+import 'package:ecomuser/providers/cart_provider.dart';
 import 'package:ecomuser/providers/order_provider.dart';
 import 'package:ecomuser/providers/product_provider.dart';
 import 'package:ecomuser/providers/user_provider.dart';
@@ -92,6 +93,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         UserProfilePage.routeName: (context) => const UserProfilePage(),
         OtpVerificationPage.routeName: (context) => const OtpVerificationPage(),
         CartPage.routeName: (context) => const CartPage(),
+        CheckoutPage.routeName: (context) => const CheckoutPage(),
       },
     );
   }

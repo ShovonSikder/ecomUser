@@ -9,6 +9,7 @@ class OrderProvider extends ChangeNotifier {
     DbHelper.getOrderSnapshots().listen((snapshot) {
       if (snapshot.exists) {
         orderConstantModel = OrderConstantModel.fromMap(snapshot.data()!);
+        notifyListeners();
       }
     });
   }
@@ -16,4 +17,19 @@ class OrderProvider extends ChangeNotifier {
   Future<void> updateOrderConstants(OrderConstantModel model) {
     return DbHelper.updateOrderConstants(model);
   }
+
+  int getDiscountAmount(num cartSubTotal) =>
+      ((cartSubTotal * orderConstantModel.discount) / 100).round();
+
+  int getVatAmount(num cartSubTotal) =>
+      (((cartSubTotal - getDiscountAmount(cartSubTotal)) *
+                  orderConstantModel.vat) /
+              100)
+          .round();
+
+  int getGrandTotal(num cartSubTotal) => (cartSubTotal -
+          getDiscountAmount(cartSubTotal) +
+          getVatAmount(cartSubTotal) +
+          orderConstantModel.deliveryCharge)
+      .round();
 }

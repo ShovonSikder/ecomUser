@@ -1,7 +1,7 @@
 import 'package:ecomuser/customwidgets/cart_bubble_view.dart';
 import 'package:ecomuser/customwidgets/main_drawer.dart';
 import 'package:ecomuser/customwidgets/product_grid_item_view.dart';
-import 'package:ecomuser/providers/card_provider.dart';
+import 'package:ecomuser/providers/cart_provider.dart';
 import 'package:ecomuser/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

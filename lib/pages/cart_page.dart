@@ -1,5 +1,6 @@
 import 'package:ecomuser/customwidgets/cart_item_view.dart';
-import 'package:ecomuser/providers/card_provider.dart';
+import 'package:ecomuser/pages/checkout_page.dart';
+import 'package:ecomuser/providers/cart_provider.dart';
 import 'package:ecomuser/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +41,12 @@ class CartPage extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline6,
                     )),
                     OutlinedButton(
-                      onPressed: provider.totalItemsInCart == 0 ? null : () {},
+                      onPressed: provider.totalItemsInCart == 0
+                          ? null
+                          : () {
+                              Navigator.pushNamed(
+                                  context, CheckoutPage.routeName);
+                            },
                       child: const Text('CHEKCOUT'),
                     )
                   ],

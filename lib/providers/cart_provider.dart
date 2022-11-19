@@ -30,6 +30,7 @@ class CartProvider extends ChangeNotifier {
       salePrice: num.parse(calculatePriceAfterDiscount(
           productModel.salePrice, productModel.productDiscount)),
       categoryId: productModel.category.categoryId!,
+      productStock: productModel.stock,
     );
     return DbHelper.addToCart(AuthService.currentUser!.uid, cartModel);
   }
@@ -47,8 +48,10 @@ class CartProvider extends ChangeNotifier {
   }
 
   void increaseQuantity(CartModel cartModel) {
-    cartModel.quantity += 1;
-    DbHelper.updateCartQuantity(AuthService.currentUser!.uid, cartModel);
+    if (cartModel.productStock > cartModel.quantity) {
+      cartModel.quantity += 1;
+      DbHelper.updateCartQuantity(AuthService.currentUser!.uid, cartModel);
+    }
   }
 
   void decreaseQuantity(CartModel cartModel) {

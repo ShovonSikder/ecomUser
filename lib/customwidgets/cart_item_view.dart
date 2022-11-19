@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecomuser/models/cart_model.dart';
-import 'package:ecomuser/providers/card_provider.dart';
+import 'package:ecomuser/providers/cart_provider.dart';
 import 'package:ecomuser/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';

@@ -1,5 +1,5 @@
 import 'package:ecomuser/pages/cart_page.dart';
-import 'package:ecomuser/providers/card_provider.dart';
+import 'package:ecomuser/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
