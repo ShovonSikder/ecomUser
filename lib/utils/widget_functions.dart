@@ -39,3 +39,31 @@ showSingleTextInputDialog({
             ],
           ));
 }
+
+redirectingDialog(
+    {required BuildContext context,
+    required String source,
+    required String destination,
+    required String title,
+    required String msg}) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title),
+      content: Text(msg),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pushNamed(context, destination, arguments: source);
+          },
+          child: const Text('Ok'),
+        )
+      ],
+    ),
+  );
+}

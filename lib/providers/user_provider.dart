@@ -16,8 +16,10 @@ class UserProvider extends ChangeNotifier {
 
   getUserInfo() {
     DbHelper.getUserInfo(AuthService.currentUser!.uid).listen((snapshot) {
-      userModel = UserModel.fromMap(snapshot.data()!);
-      notifyListeners();
+      if (snapshot.exists) {
+        userModel = UserModel.fromMap(snapshot.data()!);
+        notifyListeners();
+      }
     });
   }
 
